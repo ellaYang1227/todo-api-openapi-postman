@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <%- include('partials/head', { title: 'Todo List' }) %>
+</head>
+<body class="min-h-screen bg-slate-100">
+  <!-- 頂部列 -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-slate-800">📝 My Todo List</h1>
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-slate-500">嗨，<%= user.name %></span>
+        <button id="logout-btn"
+          class="text-sm rounded-lg border border-slate-300 px-3 py-1.5 text-slate-600 hover:bg-slate-50 transition">
+          登出
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-8">
+    <!-- 新增 todo -->
+    <form id="add-form" class="flex gap-2 mb-6">
+      <input id="new-title" type="text" required
+        class="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="要做什麼？" />
+      <button type="submit"
+        class="rounded-lg bg-indigo-600 text-white font-medium px-5 py-2 hover:bg-indigo-700 transition">
+        新增
+      </button>
+    </form>
+
+    <!-- 訊息列 -->
+    <div id="error" class="hidden mb-4 rounded-lg bg-red-50 text-red-600 text-sm px-4 py-2"></div>
+
+    <!-- todo 清單 -->
+    <ul id="todo-list" class="space-y-2"></ul>
+
+    <!-- 空清單提示 -->
+    <p id="empty-hint" class="hidden text-center text-slate-400 py-10">目前沒有待辦事項，新增一筆吧！</p>
+  </main>
+
+  <script src="/js/todos.js"></script>
+</body>
+</html>

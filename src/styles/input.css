@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Tailwind v4 會自動掃描專案檔案，這裡再明確指定要掃描的來源（相對於本檔案），
+   確保 EJS 樣板與前端 JS 內用到的 class 都會被產生。 */
+@source "../views";
+@source "../../public/js";
