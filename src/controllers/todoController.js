@@ -17,16 +17,13 @@ function getOne(req, res) {
 }
 
 // POST /api/todos
+// title 必填、非空白已由 validate(TodoCreateRequestSchema) middleware 檢查並 trim 過。
 function create(req, res) {
-  const { title, completed } = req.body || {};
-
-  if (!title || String(title).trim() === '') {
-    return res.status(400).json({ message: 'title 為必填' });
-  }
+  const { title, completed } = req.body;
 
   const todo = store.createTodo({
     userId: req.user.id,
-    title: String(title).trim(),
+    title,
     completed: completed === true,
   });
 
@@ -34,26 +31,15 @@ function create(req, res) {
 }
 
 // PUT /api/todos/:id
+// body 至少一個欄位、title 非空白已由 validate(TodoUpdateRequestSchema) middleware 檢查並 trim 過。
 function update(req, res) {
   const todo = store.findTodo(req.user.id, req.params.id);
   if (!todo) {
     return res.status(404).json({ message: '找不到此 todo' });
   }
 
-  const { title, completed } = req.body || {};
-
-  // 至少要提供一個可更新的欄位
-  if (title === undefined && completed === undefined) {
-    return res.status(400).json({ message: '請至少提供 title 或 completed' });
-  }
-  if (title !== undefined && String(title).trim() === '') {
-    return res.status(400).json({ message: 'title 不可為空字串' });
-  }
-
-  store.updateTodo(todo, {
-    title: title !== undefined ? String(title).trim() : undefined,
-    completed,
-  });
+  const { title, completed } = req.body;
+  store.updateTodo(todo, { title, completed });
 
   return res.json({ todo });
 }

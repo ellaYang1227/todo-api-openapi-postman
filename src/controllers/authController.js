@@ -21,25 +21,11 @@ function setTokenCookie(res, token) {
   });
 }
 
-// 簡單的 email 格式檢查（教學用，不追求完美）
-function isValidEmail(email) {
-  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 // POST /api/auth/register
+// 輸入格式（必填、email 格式、密碼長度）已由 validate(RegisterRequestSchema) middleware 檢查過。
 function register(req, res) {
-  const { name, email, password } = req.body || {};
+  const { name, email, password } = req.body;
 
-  // 驗證輸入
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: 'name、email、password 為必填' });
-  }
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ message: 'email 格式不正確' });
-  }
-  if (String(password).length < 6) {
-    return res.status(400).json({ message: '密碼長度至少 6 碼' });
-  }
   if (store.findUserByEmail(email)) {
     return res.status(409).json({ message: '此 email 已被註冊' });
   }
@@ -56,12 +42,9 @@ function register(req, res) {
 }
 
 // POST /api/auth/login
+// 輸入格式（必填、email 格式）已由 validate(LoginRequestSchema) middleware 檢查過。
 function login(req, res) {
-  const { email, password } = req.body || {};
-
-  if (!email || !password) {
-    return res.status(400).json({ message: 'email、password 為必填' });
-  }
+  const { email, password } = req.body;
 
   const user = store.findUserByEmail(email);
   // 不論帳號不存在或密碼錯誤，都回相同訊息（避免洩漏帳號是否存在）

@@ -2,6 +2,12 @@
 const express = require('express');
 const todoController = require('../controllers/todoController');
 const { apiAuth } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const {
+  TodoCreateRequestSchema,
+  TodoUpdateRequestSchema,
+  TodoIdParamSchema,
+} = require('../openapi/schemas');
 
 const router = express.Router();
 
@@ -9,9 +15,14 @@ const router = express.Router();
 router.use(apiAuth);
 
 router.get('/', todoController.list);
-router.post('/', todoController.create);
-router.get('/:id', todoController.getOne);
-router.put('/:id', todoController.update);
-router.delete('/:id', todoController.remove);
+router.post('/', validate(TodoCreateRequestSchema), todoController.create);
+router.get('/:id', validate(TodoIdParamSchema, 'params'), todoController.getOne);
+router.put(
+  '/:id',
+  validate(TodoIdParamSchema, 'params'),
+  validate(TodoUpdateRequestSchema),
+  todoController.update
+);
+router.delete('/:id', validate(TodoIdParamSchema, 'params'), todoController.remove);
 
 module.exports = router;
