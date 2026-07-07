@@ -21,12 +21,16 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "swagger-parser": "^10.0.3",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.0",
