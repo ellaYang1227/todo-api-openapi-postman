@@ -2,8 +2,10 @@
 const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const swaggerUi = require('swagger-ui-express');
 const registerRoutes = require('./routes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+const { generateOpenApiDocument } = require('./openapi/document');
 
 function createApp() {
   const app = express();
@@ -19,6 +21,11 @@ function createApp() {
 
   // 靜態資源（Tailwind 產出的 CSS、前端 JS）放在專案根目錄的 public/
   app.use(express.static(path.join(__dirname, '..', 'public')));
+
+  // OpenAPI 文件：原始 JSON + Swagger UI
+  const openApiDocument = generateOpenApiDocument();
+  app.get('/openapi.json', (req, res) => res.json(openApiDocument));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   // 掛載所有路由
   registerRoutes(app);
