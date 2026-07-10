@@ -1,5 +1,5 @@
 {
-  "id": "89d3038c-70a5-439c-b739-7e2218f818a6",
+  "id": "2d1dc4b1-025c-4a01-93d8-f6326e4eb170",
   "name": "Todo List RESTful API - Local",
   "values": [
     {
@@ -22,6 +22,18 @@
     },
     {
       "key": "bearerToken",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "todoId",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "todoOwnerToken",
       "value": "",
       "type": "secret",
       "enabled": true

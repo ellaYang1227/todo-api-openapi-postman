@@ -1,15 +1,15 @@
 {
   "item": [
     {
-      "id": "8e0d118b-f9b9-40b1-b43f-c9ce58e12b62",
+      "id": "e7ee5a80-efab-4d75-9101-63ef2b6c977d",
       "name": "api",
       "item": [
         {
-          "id": "05ab6fcb-21cc-4220-8ac7-ecabbf52d42f",
+          "id": "c5a88ff1-2aae-4b61-a87b-6b7e64a3695b",
           "name": "auth",
           "item": [
             {
-              "id": "dd76a349-d24b-4d43-9906-4aca6032ccc7",
+              "id": "d73d58a2-977e-47c0-9e4e-e16ef39613f3",
               "name": "註冊新使用者",
               "request": {
                 "name": "註冊新使用者",
@@ -50,7 +50,7 @@
               },
               "response": [
                 {
-                  "id": "a59a71b2-7773-43ed-9341-a783b4b2862c",
+                  "id": "e7d4ec21-fec4-4a15-80a4-0cc00297c99a",
                   "name": "註冊成功",
                   "originalRequest": {
                     "url": {
@@ -95,7 +95,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "00b25bf4-becb-4795-92aa-71d7ce29c30c",
+                  "id": "a9a4e0e4-97b1-480f-aee3-64446fea8114",
                   "name": "輸入格式錯誤",
                   "originalRequest": {
                     "url": {
@@ -140,7 +140,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "9cc3c5ee-3b62-41eb-a657-1fdb70304454",
+                  "id": "d29af83f-4be3-46f8-b9e0-af0acc648ee7",
                   "name": "email 已被註冊",
                   "originalRequest": {
                     "url": {
@@ -187,10 +187,32 @@
               ],
               "event": [
                 {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "// 每次執行都用新 email 註冊，避免重複執行 Runner 時撞到「email 已被註冊」(409)",
+                      "const uniqueEmail = `demo.${Date.now()}.${Math.floor(Math.random() * 100000)}@example.com`;",
+                      "pm.environment.set('email', uniqueEmail);"
+                    ]
+                  }
+                },
+                {
                   "listen": "test",
                   "script": {
                     "type": "text/javascript",
                     "exec": [
+                      "pm.test(\"狀態碼為 201 Created\", function () {",
+                      "  pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test(\"回應包含 user 與 token\", function () {",
+                      "  const body = pm.response.json();",
+                      "  pm.expect(body).to.have.property(\"token\").that.is.a(\"string\").and.not.empty;",
+                      "  pm.expect(body.user).to.have.property(\"id\");",
+                      "  pm.expect(body.user).to.have.property(\"email\", pm.environment.get(\"email\"));",
+                      "});",
+                      "",
                       "if (pm.response.code === 200 || pm.response.code === 201) {",
                       "  const body = pm.response.json();",
                       "  if (body.token) {",
@@ -206,7 +228,7 @@
               }
             },
             {
-              "id": "03b31ce3-103f-4fce-a2d5-a7697ff52944",
+              "id": "79ae6880-778c-41b9-9e06-5474cb2dde9e",
               "name": "登入",
               "request": {
                 "name": "登入",
@@ -247,7 +269,7 @@
               },
               "response": [
                 {
-                  "id": "01c9e225-a6a6-4305-8444-3e2d79ad9a33",
+                  "id": "5e55b45f-0815-4380-bbd2-7224678bbb0d",
                   "name": "登入成功",
                   "originalRequest": {
                     "url": {
@@ -292,7 +314,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "1ac968ae-948f-4700-a301-2d5fdaf92c77",
+                  "id": "64ae1ce1-cbfd-4fdc-aa67-f0c3a3c30400",
                   "name": "輸入格式錯誤",
                   "originalRequest": {
                     "url": {
@@ -337,7 +359,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "1bba53d6-922d-41be-abe8-2a4e934bb945",
+                  "id": "e0a718c2-d493-4d60-8678-ea36bfe75bf6",
                   "name": "email 或密碼錯誤",
                   "originalRequest": {
                     "url": {
@@ -388,6 +410,16 @@
                   "script": {
                     "type": "text/javascript",
                     "exec": [
+                      "pm.test(\"狀態碼為 200 OK\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"回應包含 user 與 token\", function () {",
+                      "  const body = pm.response.json();",
+                      "  pm.expect(body).to.have.property(\"token\").that.is.a(\"string\").and.not.empty;",
+                      "  pm.expect(body.user).to.have.property(\"email\", pm.environment.get(\"email\"));",
+                      "});",
+                      "",
                       "if (pm.response.code === 200 || pm.response.code === 201) {",
                       "  const body = pm.response.json();",
                       "  if (body.token) {",
@@ -403,7 +435,7 @@
               }
             },
             {
-              "id": "2338557b-601b-4b9a-ac91-6b0659e993d3",
+              "id": "ffd73550-bb9a-43d1-8fea-64705fd6eaaa",
               "name": "登出",
               "request": {
                 "name": "登出",
@@ -431,7 +463,7 @@
               },
               "response": [
                 {
-                  "id": "dc2dae43-a7da-4080-95ff-00bf43c50c04",
+                  "id": "66dc9a9f-573d-4c8a-862d-f1aa3c83b0ad",
                   "name": "登出成功",
                   "originalRequest": {
                     "url": {
@@ -468,13 +500,30 @@
                   "_postman_previewlanguage": "json"
                 }
               ],
-              "event": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"狀態碼為 200 OK\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"回應包含登出訊息\", function () {",
+                      "  const body = pm.response.json();",
+                      "  pm.expect(body).to.have.property(\"message\").that.is.a(\"string\").and.not.empty;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
               "protocolProfileBehavior": {
                 "disableBodyPruning": true
               }
             },
             {
-              "id": "cb36a4de-a425-470f-a550-b17003471cd2",
+              "id": "5d659d16-98f1-48e0-83dc-55dbe6374a41",
               "name": "取得目前登入使用者",
               "request": {
                 "name": "取得目前登入使用者",
@@ -510,7 +559,7 @@
               },
               "response": [
                 {
-                  "id": "f83e710d-0726-4203-9c85-07f36fa9b1a9",
+                  "id": "8ef0b64b-5d20-4535-a0f5-894106c2fc94",
                   "name": "目前登入的使用者",
                   "originalRequest": {
                     "url": {
@@ -555,7 +604,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "1d1d9076-6a5f-4ba5-a866-7c4c8c7b1b88",
+                  "id": "538d5e61-cc9d-4d4c-aa94-b163ed17e3ba",
                   "name": "未登入",
                   "originalRequest": {
                     "url": {
@@ -600,7 +649,24 @@
                   "_postman_previewlanguage": "json"
                 }
               ],
-              "event": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"狀態碼為 200 OK\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"回應為目前登入的使用者\", function () {",
+                      "  const body = pm.response.json();",
+                      "  pm.expect(body.user).to.have.property(\"email\", pm.environment.get(\"email\"));",
+                      "});"
+                    ]
+                  }
+                }
+              ],
               "protocolProfileBehavior": {
                 "disableBodyPruning": true
               }
@@ -609,11 +675,11 @@
           "event": []
         },
         {
-          "id": "b4f48872-cc15-4336-b024-6d920e6704a7",
+          "id": "23044e3b-5d33-4eea-a071-789940e454bf",
           "name": "todos",
           "item": [
             {
-              "id": "c778dbfe-3cd9-4612-982e-ddd90639ee58",
+              "id": "7c591091-85a3-47d4-a292-1dee3ef35aa2",
               "name": "取得目前使用者的所有 todo",
               "request": {
                 "name": "取得目前使用者的所有 todo",
@@ -648,7 +714,7 @@
               },
               "response": [
                 {
-                  "id": "b2ccaa10-ecef-4b15-92ba-a3a9798245c9",
+                  "id": "8ed9da9e-2452-4cd6-8a48-91721c6e3699",
                   "name": "todo 清單",
                   "originalRequest": {
                     "url": {
@@ -692,7 +758,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "12925929-7ea8-4e2f-affc-3202fcb72d92",
+                  "id": "dea9d2c2-9185-4665-9d64-f4b8c41d6fdc",
                   "name": "未登入",
                   "originalRequest": {
                     "url": {
@@ -736,13 +802,30 @@
                   "_postman_previewlanguage": "json"
                 }
               ],
-              "event": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"狀態碼為 200 OK\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"回應的 todos 為陣列\", function () {",
+                      "  const body = pm.response.json();",
+                      "  pm.expect(body.todos).to.be.an(\"array\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
               "protocolProfileBehavior": {
                 "disableBodyPruning": true
               }
             },
             {
-              "id": "b0029b37-7b2f-4a12-af8f-08fd6117ef04",
+              "id": "0a95010b-921c-496a-919b-cb9837802808",
               "name": "新增一筆 todo",
               "request": {
                 "name": "新增一筆 todo",
@@ -790,7 +873,7 @@
               },
               "response": [
                 {
-                  "id": "c50ef1e8-33ec-4fd1-a213-7517b04e4528",
+                  "id": "66eb8cea-3506-46c6-8fd7-368e2e5dd677",
                   "name": "新增成功",
                   "originalRequest": {
                     "url": {
@@ -842,7 +925,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b67a5a61-4e95-4b24-90ba-c10499372de1",
+                  "id": "a417546c-56ac-4287-ab23-358126da6a9c",
                   "name": "title 為必填",
                   "originalRequest": {
                     "url": {
@@ -894,7 +977,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "7918cd4b-8f3b-4183-bbc9-f20aae1068a5",
+                  "id": "3fb000db-959f-4fd5-ab53-878874de33e5",
                   "name": "未登入",
                   "originalRequest": {
                     "url": {
@@ -946,17 +1029,42 @@
                   "_postman_previewlanguage": "json"
                 }
               ],
-              "event": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"狀態碼為 201 Created\", function () {",
+                      "  pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test(\"回應的 todo 內容正確\", function () {",
+                      "  const body = pm.response.json();",
+                      "  pm.expect(body.todo).to.have.property(\"id\");",
+                      "  pm.expect(body.todo).to.have.property(\"title\", \"買牛奶\");",
+                      "  pm.expect(body.todo).to.have.property(\"completed\", false);",
+                      "});",
+                      "",
+                      "const body = pm.response.json();",
+                      "if (body.todo && body.todo.id !== undefined) {",
+                      "  pm.environment.set('todoId', body.todo.id);",
+                      "  pm.environment.set('todoOwnerToken', pm.environment.get('bearerToken'));",
+                      "}"
+                    ]
+                  }
+                }
+              ],
               "protocolProfileBehavior": {
                 "disableBodyPruning": true
               }
             },
             {
-              "id": "65fb9a18-5fa7-4d6a-8446-3751da3d44b1",
+              "id": "2eea03a0-7bd8-4488-9273-207d14f6f688",
               "name": "{id}",
               "item": [
                 {
-                  "id": "9544eb18-c3c3-42a0-b584-a7df64d20015",
+                  "id": "02de2f02-e1fe-4ba8-bad1-25889a322b25",
                   "name": "取得單筆 todo",
                   "request": {
                     "name": "取得單筆 todo",
@@ -975,7 +1083,7 @@
                         {
                           "disabled": false,
                           "type": "any",
-                          "value": "1",
+                          "value": "{{todoId}}",
                           "key": "id",
                           "description": "(Required) Todo ID"
                         }
@@ -1000,7 +1108,7 @@
                   },
                   "response": [
                     {
-                      "id": "d5fdd186-c857-4abe-83cd-5f79839983ec",
+                      "id": "e99f0c6f-5ea9-4206-a831-c3d2b9225628",
                       "name": "單筆 todo",
                       "originalRequest": {
                         "url": {
@@ -1053,7 +1161,7 @@
                       "_postman_previewlanguage": "json"
                     },
                     {
-                      "id": "837c16b5-b568-4a20-8f4f-bf6f56dad7fc",
+                      "id": "52ee5844-6110-4126-961e-356f81f19932",
                       "name": "未登入",
                       "originalRequest": {
                         "url": {
@@ -1106,7 +1214,7 @@
                       "_postman_previewlanguage": "json"
                     },
                     {
-                      "id": "07727cb3-ea0e-4291-8f6a-d32a19d235cb",
+                      "id": "7a064495-fe31-4bdc-b9a6-eaec728a5683",
                       "name": "找不到此 todo",
                       "originalRequest": {
                         "url": {
@@ -1159,13 +1267,30 @@
                       "_postman_previewlanguage": "json"
                     }
                   ],
-                  "event": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"狀態碼為 200 OK\", function () {",
+                          "  pm.response.to.have.status(200);",
+                          "});",
+                          "",
+                          "pm.test(\"回應的 todo id 與剛建立的一致\", function () {",
+                          "  const body = pm.response.json();",
+                          "  pm.expect(String(body.todo.id)).to.eql(String(pm.environment.get(\"todoId\")));",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
                   "protocolProfileBehavior": {
                     "disableBodyPruning": true
                   }
                 },
                 {
-                  "id": "22ecc475-9b04-4700-9e15-719c1d814e0b",
+                  "id": "093089a1-805a-48e0-b08a-4216a6d4d793",
                   "name": "更新一筆 todo（title / completed 至少擇一）",
                   "request": {
                     "name": "更新一筆 todo（title / completed 至少擇一）",
@@ -1184,7 +1309,7 @@
                         {
                           "disabled": false,
                           "type": "any",
-                          "value": "1",
+                          "value": "{{todoId}}",
                           "key": "id",
                           "description": "(Required) Todo ID"
                         }
@@ -1222,7 +1347,7 @@
                   },
                   "response": [
                     {
-                      "id": "ba959a19-ff1f-4231-b2eb-0c98c58bcf9e",
+                      "id": "413d2d30-6bfd-40bc-abb9-0bdd101c7861",
                       "name": "更新成功",
                       "originalRequest": {
                         "url": {
@@ -1283,7 +1408,7 @@
                       "_postman_previewlanguage": "json"
                     },
                     {
-                      "id": "7883109b-036a-4db5-88f2-a97079d0db8a",
+                      "id": "b9269373-afb0-4386-9a5e-9a984b8c30e7",
                       "name": "請至少提供 title 或 completed",
                       "originalRequest": {
                         "url": {
@@ -1344,7 +1469,7 @@
                       "_postman_previewlanguage": "json"
                     },
                     {
-                      "id": "2ef5e542-4278-4591-9817-558bebc3d75f",
+                      "id": "4eb9776b-97b5-48ff-9962-fd35aea9a81d",
                       "name": "未登入",
                       "originalRequest": {
                         "url": {
@@ -1405,7 +1530,7 @@
                       "_postman_previewlanguage": "json"
                     },
                     {
-                      "id": "085e296a-9fa9-4cf3-862e-64f72ef80ab8",
+                      "id": "96200b88-41a1-4c3a-800e-0ba8a6ee8f38",
                       "name": "找不到此 todo",
                       "originalRequest": {
                         "url": {
@@ -1466,13 +1591,31 @@
                       "_postman_previewlanguage": "json"
                     }
                   ],
-                  "event": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"狀態碼為 200 OK\", function () {",
+                          "  pm.response.to.have.status(200);",
+                          "});",
+                          "",
+                          "pm.test(\"回應的 todo 已更新\", function () {",
+                          "  const body = pm.response.json();",
+                          "  pm.expect(body.todo).to.have.property(\"title\", \"買牛奶（更新）\");",
+                          "  pm.expect(body.todo).to.have.property(\"completed\", true);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
                   "protocolProfileBehavior": {
                     "disableBodyPruning": true
                   }
                 },
                 {
-                  "id": "9f526074-1399-4f09-b9b5-0cf959e591d0",
+                  "id": "63cac41b-0d73-4e73-9c0d-88010d8e3447",
                   "name": "刪除一筆 todo",
                   "request": {
                     "name": "刪除一筆 todo",
@@ -1491,7 +1634,7 @@
                         {
                           "disabled": false,
                           "type": "any",
-                          "value": "1",
+                          "value": "{{todoId}}",
                           "key": "id",
                           "description": "(Required) Todo ID"
                         }
@@ -1516,7 +1659,7 @@
                   },
                   "response": [
                     {
-                      "id": "79a9bd7c-3c16-426f-a411-c999aa796971",
+                      "id": "495bc6e3-6398-489f-9e92-9c86a7a21d77",
                       "name": "刪除成功（無內容）",
                       "originalRequest": {
                         "url": {
@@ -1565,7 +1708,7 @@
                       "_postman_previewlanguage": "text"
                     },
                     {
-                      "id": "649fffca-0aa4-4212-b7a3-c7daeb041a22",
+                      "id": "7bc3eb09-6936-4551-ba11-f865c7cb8ac9",
                       "name": "未登入",
                       "originalRequest": {
                         "url": {
@@ -1618,7 +1761,7 @@
                       "_postman_previewlanguage": "json"
                     },
                     {
-                      "id": "d6795b63-0c65-48e6-b825-b476efd436f8",
+                      "id": "1a51ac8c-0eff-413b-bfaa-216b4150107d",
                       "name": "找不到此 todo",
                       "originalRequest": {
                         "url": {
@@ -1671,13 +1814,88 @@
                       "_postman_previewlanguage": "json"
                     }
                   ],
-                  "event": [],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"狀態碼為 204 No Content\", function () {",
+                          "  pm.response.to.have.status(204);",
+                          "});",
+                          "",
+                          "pm.test(\"回應主體為空\", function () {",
+                          "  pm.expect(pm.response.text()).to.be.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
                   "protocolProfileBehavior": {
                     "disableBodyPruning": true
                   }
                 }
               ],
-              "event": []
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function createTodo(done) {",
+                      "  pm.sendRequest({",
+                      "    url: pm.environment.get('baseUrl') + '/api/todos',",
+                      "    method: 'POST',",
+                      "    header: {",
+                      "      'Content-Type': 'application/json',",
+                      "      Authorization: 'Bearer ' + pm.environment.get('bearerToken'),",
+                      "    },",
+                      "    body: { mode: 'raw', raw: JSON.stringify({ title: '買牛奶', completed: false }) },",
+                      "  }, function (err, res) {",
+                      "    if (!err && res.code === 201) {",
+                      "      const body = res.json();",
+                      "      if (body.todo && body.todo.id !== undefined) {",
+                      "        pm.environment.set('todoId', body.todo.id);",
+                      "        pm.environment.set('todoOwnerToken', pm.environment.get('bearerToken'));",
+                      "      }",
+                      "    }",
+                      "    done();",
+                      "  });",
+                      "}",
+                      "",
+                      "function ensureOwnedTodo(done) {",
+                      "  const hasOwnedTodo = pm.environment.get('todoId') &&",
+                      "    pm.environment.get('todoOwnerToken') === pm.environment.get('bearerToken');",
+                      "  if (hasOwnedTodo) return done();",
+                      "  createTodo(done);",
+                      "}",
+                      "",
+                      "if (pm.environment.get('bearerToken')) {",
+                      "  ensureOwnedTodo(function () {});",
+                      "} else {",
+                      "  pm.sendRequest({",
+                      "    url: pm.environment.get('baseUrl') + '/api/auth/login',",
+                      "    method: 'POST',",
+                      "    header: { 'Content-Type': 'application/json' },",
+                      "    body: {",
+                      "      mode: 'raw',",
+                      "      raw: JSON.stringify({",
+                      "        email: pm.environment.get('email'),",
+                      "        password: pm.environment.get('password'),",
+                      "      }),",
+                      "    },",
+                      "  }, function (err, res) {",
+                      "    if (!err && res.code === 200) {",
+                      "      const body = res.json();",
+                      "      if (body.token) pm.environment.set('bearerToken', body.token);",
+                      "    }",
+                      "    ensureOwnedTodo(function () {});",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
             }
           ],
           "event": []
@@ -1695,7 +1913,7 @@
     }
   ],
   "info": {
-    "_postman_id": "ae9af7db-1e42-42f8-8ba9-5fc03fc1825e",
+    "_postman_id": "56f3142e-dc92-46e3-8a7f-5298526e211f",
     "name": "Todo List RESTful API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {
