@@ -1,5 +1,5 @@
 {
-  "name": "todo-restful-api",
+  "name": "todo-api-openapi-postman",
   "version": "1.0.0",
   "private": true,
   "description": "教學用：Node.js + Express + EJS + Tailwind 的 Todo List RESTful API（JWT 認證、記憶體資料）",
