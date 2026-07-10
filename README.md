@@ -40,6 +40,8 @@ npm run dev
 - 這些 zod schema 同時也是 API 的驗證依據：`src/middleware/validate.js` 會用同一份 schema 檢查 request body / params，取代原本手刻的 `if` 驗證，錯誤時回 `400 { message }`
 
 ### Postman Collection
+> 對應分支：`feat/postman`
+
 - `npm run postman:build`：用 `openapi-to-postmanv2` 把 `openapi.json` 轉成 `postman/collection.json`，並產生對應的 `postman/environment.json`
 - 匯入方式：Postman → Import → 把 `postman/collection.json` 和 `postman/environment.json` 都拖進去，右上角環境切換選 **Todo List RESTful API - Local**
 - environment 內建 4 個變數：`baseUrl`（預設 `http://localhost:3000`）、`email`、`password`（預設帳密）、`bearerToken`（初始空白）
