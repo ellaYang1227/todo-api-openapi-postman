@@ -11,7 +11,9 @@
     "dev:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/output.css --watch",
     "build:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/output.css --minify",
     "docs:build": "node scripts/generate-openapi.js",
-    "postman:build": "node scripts/generate-postman.js"
+    "postman:build": "node scripts/generate-postman.js",
+    "postman:test": "newman run postman/collection.json -e postman/environment.json",
+    "postman:report": "newman run postman/collection.json -e postman/environment.json -r htmlextra --reporter-htmlextra-export report.html"
   },
   "keywords": [
     "todo",
@@ -37,6 +39,8 @@
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.0",
     "concurrently": "^10.0.3",
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1",
     "nodemon": "^3.1.14",
     "openapi-to-postmanv2": "^6.3.0",
     "tailwindcss": "^4.3.0"

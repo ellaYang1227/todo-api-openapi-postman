@@ -57,6 +57,15 @@ npm run dev
 3. **todo 串接**：「新增一筆 todo」成功後把 `todo.id` 存進 `{{todoId}}`，「取得 / 更新 / 刪除單筆 todo」直接沿用同一筆資料，不用手動改路徑參數
 4. **`{id}` 資料夾可獨立執行**：這個資料夾另外掛了 pre-request script，如果 `{{todoId}}` 不是「目前登入者」建立的（例如單獨只跑這個資料夾、或沿用了上一輪 Runner 留下的舊資料），會自動補登入 / 補建一筆 todo，確保單獨執行也不會因為缺資料而失敗
 
+也可以不開 Postman GUI，改用 [newman](https://www.npmjs.com/package/newman)（Collection Runner 的 CLI 版本）在終端機跑同一份測試，方便串進 CI。**執行前記得先啟動伺服器**（`npm start` 或 `npm run dev`）：
+```bash
+# 跑完整份 Collection，結果直接印在終端機
+npm run postman:test
+
+# 額外用 htmlextra 產生一份 report.html 視覺化報告
+npm run postman:report
+```
+
 ### 預設測試帳號
 - Email：`demo@example.com`
 - 密碼：`demo1234`
@@ -71,6 +80,8 @@ npm run dev
 | `npm run dev:css` | 只監看建置 CSS |
 | `npm run docs:build` | 驗證 OpenAPI 文件並輸出 `openapi.json` |
 | `npm run postman:build` | 把 `openapi.json` 轉成 Postman Collection + Environment |
+| `npm run postman:test` | 用 newman 在終端機執行整份 Postman Collection（需先啟動伺服器） |
+| `npm run postman:report` | 同上，並額外產生 `report.html` 視覺化測試報告 |
 
 ## API 一覽（前綴 `/api`）
 
