@@ -33,6 +33,8 @@ npm run dev
 啟動後開啟 http://localhost:3000
 
 ### OpenAPI 文件 / Swagger UI
+> 對應分支：`feat/openapi`
+
 - 瀏覽器開啟 http://localhost:3000/api-docs 可看互動式文件（右上角 **Authorize** 貼上登入回應的 `token` 即可測試需登入的 API）
 - http://localhost:3000/openapi.json 是原始 OpenAPI 3.0 JSON（伺服器啟動時即時產生）
 - `npm run docs:build` 會另外驗證並輸出一份到專案根目錄的 `openapi.json`（可直接匯入 Postman）
