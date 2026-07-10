@@ -39,6 +39,12 @@ npm run dev
 - 文件內容定義在 `src/openapi/`：`schemas.js`（zod schema）、`paths.js`（路由對應）、`document.js`（產生文件）
 - 這些 zod schema 同時也是 API 的驗證依據：`src/middleware/validate.js` 會用同一份 schema 檢查 request body / params，取代原本手刻的 `if` 驗證，錯誤時回 `400 { message }`
 
+### Postman Collection
+- `npm run postman:build`：用 `openapi-to-postmanv2` 把 `openapi.json` 轉成 `postman/collection.json`，並產生對應的 `postman/environment.json`
+- 匯入方式：Postman → Import → 把 `postman/collection.json` 和 `postman/environment.json` 都拖進去，右上角環境切換選 **Todo List RESTful API - Local**
+- environment 內建 4 個變數：`baseUrl`（預設 `http://localhost:3000`）、`email`、`password`（預設帳密）、`bearerToken`（初始空白）
+- 「註冊新使用者」「登入」這兩個請求的 body 直接吃 `{{email}}` / `{{password}}`，送出成功後會自動把回應的 `token` 存進 `{{bearerToken}}`；其餘需要登入的請求都用 Bearer Auth 讀這個變數，跑過一次登入後就不用再手動貼 token
+
 ### 預設測試帳號
 - Email：`demo@example.com`
 - 密碼：`demo1234`
@@ -52,6 +58,7 @@ npm run dev
 | `npm run build:css` | 建置並壓縮 Tailwind CSS |
 | `npm run dev:css` | 只監看建置 CSS |
 | `npm run docs:build` | 驗證 OpenAPI 文件並輸出 `openapi.json` |
+| `npm run postman:build` | 把 `openapi.json` 轉成 Postman Collection + Environment |
 
 ## API 一覽（前綴 `/api`）
 
@@ -100,9 +107,13 @@ src/
 ├── views/             EJS 樣板
 └── styles/input.css   Tailwind 入口
 scripts/
-└── generate-openapi.js 產生並驗證 openapi.json 的腳本
+├── generate-openapi.js 產生並驗證 openapi.json 的腳本
+└── generate-postman.js 把 openapi.json 轉成 Postman Collection + Environment
 public/
 ├── css/output.css     Tailwind 產出（build 後）
 └── js/                前端 auth.js、todos.js
-openapi.json            執行 `npm run docs:build` 後產生（可匯入 Postman）
+openapi.json            執行 `npm run docs:build` 後產生
+postman/
+├── collection.json    執行 `npm run postman:build` 後產生
+└── environment.json   同上，含 baseUrl / email / password / bearerToken
 ```

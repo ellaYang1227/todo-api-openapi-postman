@@ -10,7 +10,8 @@
     "dev:server": "nodemon src/server.js",
     "dev:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/output.css --watch",
     "build:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/output.css --minify",
-    "docs:build": "node scripts/generate-openapi.js"
+    "docs:build": "node scripts/generate-openapi.js",
+    "postman:build": "node scripts/generate-postman.js"
   },
   "keywords": [
     "todo",
@@ -37,6 +38,7 @@
     "@tailwindcss/cli": "^4.3.0",
     "concurrently": "^10.0.3",
     "nodemon": "^3.1.14",
+    "openapi-to-postmanv2": "^6.3.0",
     "tailwindcss": "^4.3.0"
   }
 }
