@@ -33,6 +33,8 @@ npm run dev
 啟動後開啟 http://localhost:3000
 
 ### OpenAPI 文件 / Swagger UI
+> 對應分支：`feat/openapi`
+
 - 瀏覽器開啟 http://localhost:3000/api-docs 可看互動式文件（右上角 **Authorize** 貼上登入回應的 `token` 即可測試需登入的 API）
 - http://localhost:3000/openapi.json 是原始 OpenAPI 3.0 JSON（伺服器啟動時即時產生）
 - `npm run docs:build` 會另外驗證並輸出一份到專案根目錄的 `openapi.json`（可直接匯入 Postman）
@@ -40,10 +42,20 @@ npm run dev
 - 這些 zod schema 同時也是 API 的驗證依據：`src/middleware/validate.js` 會用同一份 schema 檢查 request body / params，取代原本手刻的 `if` 驗證，錯誤時回 `400 { message }`
 
 ### Postman Collection
+> 對應分支：`feat/postman`
+
 - `npm run postman:build`：用 `openapi-to-postmanv2` 把 `openapi.json` 轉成 `postman/collection.json`，並產生對應的 `postman/environment.json`
 - 匯入方式：Postman → Import → 把 `postman/collection.json` 和 `postman/environment.json` 都拖進去，右上角環境切換選 **Todo List RESTful API - Local**
-- environment 內建 4 個變數：`baseUrl`（預設 `http://localhost:3000`）、`email`、`password`（預設帳密）、`bearerToken`（初始空白）
-- 「註冊新使用者」「登入」這兩個請求的 body 直接吃 `{{email}}` / `{{password}}`，送出成功後會自動把回應的 `token` 存進 `{{bearerToken}}`；其餘需要登入的請求都用 Bearer Auth 讀這個變數，跑過一次登入後就不用再手動貼 token
+- environment 內建 6 個變數：`baseUrl`（預設 `http://localhost:3000`）、`email`、`password`（預設帳密）、`bearerToken`（登入後自動填入）、`todoId` / `todoOwnerToken`（串接單筆 todo 用，自動填入）
+
+### Collection Runner 一鍵跑完 + 自動驗證
+> 對應分支：`feature/postman-runner`
+
+每一支請求都掛了 test script 斷言（狀態碼 + 回應內容），可以直接用 **Collection Runner** 對整份 Collection 按下 Run，一次跑完並看到全部 PASS：
+1. **登入串接**：「註冊新使用者」「登入」的 body 吃 `{{email}}` / `{{password}}`，成功後自動把回應的 `token` 存進 `{{bearerToken}}`；其餘需要登入的請求都用 Bearer Auth 讀這個變數，不用手動貼 token
+2. **註冊可重複執行**：「註冊新使用者」有 pre-request script，每次執行都會換一組不重複的 email，重複跑 Runner 也不會撞到「email 已被註冊」(409)
+3. **todo 串接**：「新增一筆 todo」成功後把 `todo.id` 存進 `{{todoId}}`，「取得 / 更新 / 刪除單筆 todo」直接沿用同一筆資料，不用手動改路徑參數
+4. **`{id}` 資料夾可獨立執行**：這個資料夾另外掛了 pre-request script，如果 `{{todoId}}` 不是「目前登入者」建立的（例如單獨只跑這個資料夾、或沿用了上一輪 Runner 留下的舊資料），會自動補登入 / 補建一筆 todo，確保單獨執行也不會因為缺資料而失敗
 
 ### 預設測試帳號
 - Email：`demo@example.com`
@@ -114,6 +126,6 @@ public/
 └── js/                前端 auth.js、todos.js
 openapi.json            執行 `npm run docs:build` 後產生
 postman/
-├── collection.json    執行 `npm run postman:build` 後產生
-└── environment.json   同上，含 baseUrl / email / password / bearerToken
+├── collection.json    執行 `npm run postman:build` 後產生，每支請求皆含 test script 斷言
+└── environment.json   同上，含 baseUrl / email / password / bearerToken / todoId / todoOwnerToken
 ```
